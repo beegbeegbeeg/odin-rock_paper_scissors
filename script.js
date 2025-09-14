@@ -1,52 +1,104 @@
+let humanScore = 0;
+let computerScore = 0;
+let round = 0;
+let playingGame = true;
 
+const gameMessage = document.querySelector("#gameMessage");
+
+const rockButton = document.querySelector("#Rock");
+const paperButton = document.querySelector("#Paper");
+const scissorsButton = document.querySelector("#Scissors");
+const restartButton = document.querySelector("#Restart");
+
+const score = document.querySelector("#score");
+
+
+rockButton.addEventListener("click", () => { playRound("rock") });
+paperButton.addEventListener("click", () => { playRound("paper") });
+scissorsButton.addEventListener("click", () => { playRound("scissors") });
+restartButton.addEventListener("click", () => {
+    humanScore = 0;
+    computerScore = 0;
+    round = 0;
+    playingGame = true;
+    score.textContent = "";
+    gameMessage.textContent = "";
+});
+
+
+
+function printMessage(message) {
+    gameMessage.textContent = message;
+}
 
 function getComputerChoice() {
     const choice = Math.floor(Math.random() * 3);
     return ["rock", "paper", "scissors"][choice];
 }
-function getHumanChoice() {
-    return prompt("choose rock paper or scissors").toLowerCase();
+function updateScore(playerWin, computerWin) {
+    round += 1;
+    humanScore += playerWin;
+    computerScore += computerWin;
+
+    if (computerScore > humanScore && round == 5) {
+        score.textContent = "Final score! puny human: " + humanScore + " MIGHTY COMPUTER: " + computerScore + ".";
+        playingGame = false;
+        return;
+    }
+    if (computerScore == 5 && humanScore <= 5) {
+        score.textContent = "Final score! puny human: " + humanScore + " MIGHTY COMPUTER: " + computerScore + ".";
+        playingGame = false;
+        return;
+    }
+    if (computerScore <= 5 && humanScore == 5) {
+        score.textContent = "Final score... human: " + humanScore + " computer: " + computerScore + ".";
+        playingGame = false;
+        return;
+    }
+
+    // the computer cheats a little bit with the best of 5 or up to 5
+    if (round < 5)
+        score.textContent = "score (round " + round + " of 5) Human: " + humanScore + " Computer: " + computerScore;
+    else
+        score.textContent = "score (first to 5 wins) Human: " + humanScore + " Computer: " + computerScore;
+
 }
-
-
-
-function playRound(humanChoice, computerChoice) {
-    let result = [0,0];
+function playRound(humanChoice) {
+    if (!playingGame)
+        return;
+    const computerChoice = getComputerChoice();
     if (humanChoice === computerChoice) {
-        console.log("TIE, I WIN!!! you also win. " + humanChoice + " is the same as " + computerChoice + ".");
-        result = [1,1];
+        printMessage("TIE, I WIN!!! you also win. " + humanChoice + " is the same as " + computerChoice + ".");
+        updateScore(1, 1);
     }
     if (humanChoice == "paper" && computerChoice == "rock") {
-        console.log("You win this time... " + humanChoice + " beats " + computerChoice + ".");
-        result = [1,0];
+        printMessage("You win this time... " + humanChoice + " beats " + computerChoice + ".");
+        updateScore(1, 0);
     }
     if (humanChoice == "paper" && computerChoice == "scissors") {
-        console.log("I WIN!!! your puny " + humanChoice + " has no change against my sharp " + computerChoice + "!");
-        result = [0,1];
+        printMessage("I WIN!!! your puny " + humanChoice + " has no chance against my sharp " + computerChoice + "!");
+        updateScore(0, 1);
     }
     if (humanChoice == "rock" && computerChoice == "scissors") {
-        console.log("You win this time... " + humanChoice + " beats " + computerChoice + ".");
-        result = [1,0];
+        printMessage("You win this time... " + humanChoice + " beats " + computerChoice + ".");
+        updateScore(1, 0);
     }
     if (humanChoice == "rock" && computerChoice == "paper") {
-        console.log("I WIN!!! your dull " + humanChoice + " has no change against my sleek " + computerChoice + "!");
-        result = [0,1];
+        printMessage("I WIN!!! your dull " + humanChoice + " has no chance against my sleek " + computerChoice + "!");
+        updateScore(0, 1);
     }
     if (humanChoice == "scissors" && computerChoice == "paper") {
-        console.log("You win this time... " + humanChoice + " beats " + computerChoice + ".");
-        result = [1,0];
+        printMessage("You win this time... " + humanChoice + " beats " + computerChoice + ".");
+        updateScore(1, 0);
     }
     if (humanChoice == "scissors" && computerChoice == "rock") {
-        console.log("I WIN!!! your brittle " + humanChoice + " have no change against my strong " + computerChoice + "!");
-        result = [0,1];
+        printMessage("I WIN!!! your brittle " + humanChoice + " have no chance against my strong " + computerChoice + "!");
+        updateScore(0, 1);
     }
-    return result;
 }
 
 
 function playGame() {
-    let humanScore = 0;
-    let computerScore = 0;
 
     for (let i = 0; i < 5; i++) {
         const humanSelection = getHumanChoice();
@@ -56,9 +108,12 @@ function playGame() {
         humanScore += result[0];
         computerScore += result[1];
     }
-        console.log("Final score! puny Human: " + humanScore + " chad Computer: " + computerScore + ".");
-        if(computerScore > humanScore){
-            console.log("I win");
-        }
+    printMessage("Final score! puny human: " + humanScore + " MIGHTY COMPUTER: " + computerScore + ".");
+    if (computerScore > humanScore) {
+        printMessage("I win");
+    }
 }
-playGame();
+
+
+
+
